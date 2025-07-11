@@ -24,16 +24,20 @@ On a fresh Ubuntu 20.04 system, run the following commands in order to set up th
 sudo apt update
 sudo apt upgrade
 
---- Install build tools
+--- Install build tools：
+
 sudo apt install autoconf automake libtool
 
----Install 32-bit build toolchain and debug libraries
+---Install 32-bit build toolchain and debug libraries：
+
 sudo apt install gcc-multilib g++-multilib libc6-dev-i386 make libc6-dbg
 
---- Install 32-bit libc debug symbols
+--- Install 32-bit libc debug symbols：
+
 sudo apt install libc6-dbg:i386
 
---- Enable i386 architecture
+--- Enable i386 architecture：
+
 sudo dpkg --add-architecture i386
 
 # Building the Target Program
