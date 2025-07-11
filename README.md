@@ -81,6 +81,7 @@ In a separate terminal window, while the server is running under GDB (launched b
 python3 exp.py
 
 -----------------------------------------Notes--------------------------------------------------------------
+
 If you do not set the correct return address in exp.py to point to the shellcode, the attack can still cause a segmentation fault (segfault) on the server side when the return address is overwritten with an invalid value.
 
 A segmentation fault also indicates that the attack successfully hijacked the control flow — the return address was tampered with — but the shellcode was not executed
