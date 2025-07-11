@@ -91,16 +91,26 @@ Ensure that your shellcode is properly placed in memory and accessible at the sp
 
 The exact method for obtaining the return address will depend on the target system, so memory inspection tools like GDB are essential.
 
-# How the Defense Works
-The TRACE defense mechanism uses a dynamic path-sensitive approach to bind the return address to a unique function call path. This is achieved by:
+# Debugging to Find the Return Address
+If you want to reproduce the attack and set the correct return address in exp.py, you can use GDB to precisely locate the return address on the stack and compute the memory address of the injected shellcode.
 
-1.Path state encoding: The current execution path is encoded using a state vector that is updated during function calls. 
+1. Start GDB and set a breakpoint in modbus_reply
 
-2.Encryption: The return address and its path context are encrypted using the PRESENT cipher. 
+2.When the breakpoint hits, examine the stack frame and locate the saved return address for modbus_reply.
 
-3.Return address verification: Upon returning from a function, the integrity of the return address is verified by decrypting it and comparing it with the expected value.
-If the return address does not match the expected value, the program execution is aborted, preventing the control flow hijacking.
+3.Next, identify where your shellcode is placed relative to the return address.
+For example, if in exp.py you see that the shellcode is appended after a certain number of padding bytes after the return address, you can calculate its position in memory from the stack snapshot in GDB.
 
+4. Once you determine the memory address where your shellcode resides, update the ret variable in exp.py to point to this address: ret = p32(0xYOUR_SHELLCODE_ADDRESS)
+
+5. Run the attack again: python3 exp.py
+
+# What Happens When Shellcode Executes
+When the attack is successful (only when TRACE defense is disabled, i.e., in baseline mode), the return address is overwritten to point to your shellcode.
+The shellcode provided in exp.py is a classic Linux x86 payload that executes /bin/sh, effectively giving you a shell on the server process.
+
+On the server-side terminal you should see a segmentation fault or illegal instruction if the return address is wrong, which also indicates that control flow was hijacked but crashed.
+If the return address is correct and points to the shellcode, you will spawn a shell or see evidence of arbitrary code execution.
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
