@@ -7,7 +7,7 @@ ctx = 0x804c1a0
 req = 0x804c1f0
 req_length = 0x104
 mb_mapping = 0x804c300
-ret = p32(0xffffd080)
+ret = p32(0xffffd070)
 # 构造 Modbus/TCP 报文
 def build_modbus_packet():
     # 对应的十六进制包：
