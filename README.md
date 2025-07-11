@@ -94,16 +94,16 @@ The exact method for obtaining the return address will depend on the target syst
 # Debugging to Find the Return Address
 If you want to reproduce the attack and set the correct return address in exp.py, you can use GDB to precisely locate the return address on the stack and compute the memory address of the injected shellcode.
 
-1. Start GDB and set a breakpoint in modbus_reply
+1.Start GDB and set a breakpoint in modbus_reply
 
 2.When the breakpoint hits, examine the stack frame and locate the saved return address for modbus_reply.
 
 3.Next, identify where your shellcode is placed relative to the return address.
 For example, if in exp.py you see that the shellcode is appended after a certain number of padding bytes after the return address, you can calculate its position in memory from the stack snapshot in GDB.
 
-4. Once you determine the memory address where your shellcode resides, update the ret variable in exp.py to point to this address: ret = p32(0xYOUR_SHELLCODE_ADDRESS)
+4.Once you determine the memory address where your shellcode resides, update the ret variable in exp.py to point to this address: ret = p32(0xYOUR_SHELLCODE_ADDRESS)
 
-5. Run the attack again: python3 exp.py
+5.Run the attack again: python3 exp.py
 
 # What Happens When Shellcode Executes
 When the attack is successful (only when TRACE defense is disabled, i.e., in baseline mode), the return address is overwritten to point to your shellcode.
