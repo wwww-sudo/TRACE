@@ -57,11 +57,15 @@ make install
 # Running the Experiment
 1.Enable or disable defense
 Open automated_run.py and set the ENABLE_TRACE variable:
-Enable TRACE Defense : ENABLE_TRACE = True
+
+Enable TRACE Defense : ENABLE_TRACE = True.
+
 Disable Defense : ENABLE_TRACE = False
 
 2.Run the experiment
-From the project root directory : python3 automated_run.py
+From the project root directory : 
+
+python3 automated_run.py
 
 This will:
 Start GDB with or without the TRACE defense based on ENABLE_TRACE
@@ -71,7 +75,10 @@ If the attack is successful (control flow is hijacked), the experiment executes 
 
 3.Reproducing the Attack
 To successfully reproduce the attack (and execute the shellcode), you need to set the correct return address in exp.py that points to the shellcode in memory.
-In a separate terminal window, while the server is running under GDB (launched by automated_run.py), execute the attack script: python3 exp.py
+
+In a separate terminal window, while the server is running under GDB (launched by automated_run.py), execute the attack script: 
+
+python3 exp.py
 
 -----------------------------------------Notes--------------------------------------------------------------
 If you do not set the correct return address in exp.py to point to the shellcode, the attack can still cause a segmentation fault (segfault) on the server side when the return address is overwritten with an invalid value.
@@ -80,12 +87,16 @@ A segmentation fault also indicates that the attack successfully hijacked the co
 
 # Important Notes
 Ensure that your shellcode is properly placed in memory and accessible at the specified address. This may require debugging and analysis using GDB.
+
 The exact method for obtaining the return address will depend on the target system, so memory inspection tools like GDB are essential.
 
 # How the Defense Works
 The TRACE defense mechanism uses a dynamic path-sensitive approach to bind the return address to a unique function call path. This is achieved by:
+
 1.Path state encoding: The current execution path is encoded using a state vector that is updated during function calls. 
+
 2.Encryption: The return address and its path context are encrypted using the PRESENT cipher. 
+
 3.Return address verification: Upon returning from a function, the integrity of the return address is verified by decrypting it and comparing it with the expected value.
 If the return address does not match the expected value, the program execution is aborted, preventing the control flow hijacking.
 
