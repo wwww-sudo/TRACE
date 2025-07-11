@@ -1,6 +1,6 @@
 # TRACE
 TRACE: Trusted Return-Path Authentication via Context and Lightweight Encryption TRACE is a lightweight control flow integrity (CFI) mechanism designed to defend against Return-Oriented Programming (ROP) attacks in embedded systems. TRACE dynamically binds return addresses to the unique function call path, making it difficult for attackers to hijack control flow by exploiting buffer overflows and other memory corruption vulnerabilities. This project uses the PRESENT cipher for lightweight encryption of return addresses and provides a defense mechanism that can be easily integrated with embedded applications.
---------------------------------------Project Structure------------------------------------
+# Project Structure
 The project contains the following components:
 libmodbus-2.9.3/: This folder contains the Modbus protocol stack used for testing the vulnerabilities in embedded systems.
 TRACE_CFI.py: The main defense script that provides the return-path authentication mechanism.
@@ -10,13 +10,13 @@ automated_run.py: The automation script used to run experiments, either with or 
 exp.py: The exploit script used to perform the attack.
 README.md: This file, containing the project documentation and instructions.
 
---------------------------------------Requirements--------------------------------------
+# Requirements
 Operating System: Ubuntu 20.04 (tested)
 GDB: GNU Debugger, to run the target program and inject defense logic
 Python 3: to run the automation and attack scripts
 32-bit GCC toolchain: to build the target program for 32-bit architecture
 
---------------------------------------Environment Setup--------------------------------------
+# Environment Setup
 On a fresh Ubuntu 20.04 system, run the following commands in order to set up the environment:
 
 1. Clone the repository: git clone https://github.com/wwww-sudo/TRACE.git
@@ -24,19 +24,19 @@ On a fresh Ubuntu 20.04 system, run the following commands in order to set up th
 sudo apt update
 sudo apt upgrade
 
-# Install build tools
+--- Install build tools
 sudo apt install autoconf automake libtool
 
-# Install 32-bit build toolchain and debug libraries
+---Install 32-bit build toolchain and debug libraries
 sudo apt install gcc-multilib g++-multilib libc6-dev-i386 make libc6-dbg
 
-# Install 32-bit libc debug symbols
+--- Install 32-bit libc debug symbols
 sudo apt install libc6-dbg:i386
 
-# Enable i386 architecture
+--- Enable i386 architecture
 sudo dpkg --add-architecture i386
 
-----------------------------------Building the Target Program------------------------------
+# Building the Target Program
 In the project directory, navigate to libmodbus-2.9.3/ and build the server:(Some error messages in the compilation will not affect the experiment.)
 
 cd libmodbus-2.9.3
@@ -49,7 +49,7 @@ make
 
 make install
 
-----------------------------------Running the Experiment------------------------------
+# Running the Experiment
 1.Enable or disable defense
 Open automated_run.py and set the ENABLE_TRACE variable:
 Enable TRACE Defense : ENABLE_TRACE = True
@@ -68,23 +68,23 @@ If the attack is successful (control flow is hijacked), the experiment executes 
 To successfully reproduce the attack (and execute the shellcode), you need to set the correct return address in exp.py that points to the shellcode in memory.
 In a separate terminal window, while the server is running under GDB (launched by automated_run.py), execute the attack script: python3 exp.py
 
-# Notes:
+-----------------------------------------Notes--------------------------------------------------------------
 If you do not set the correct return address in exp.py to point to the shellcode, the attack can still cause a segmentation fault (segfault) on the server side when the return address is overwritten with an invalid value.
 
 A segmentation fault also indicates that the attack successfully hijacked the control flow — the return address was tampered with — but the shellcode was not executed
 
---------------------------------------Important Notes--------------------------------------
+# Important Notes
 Ensure that your shellcode is properly placed in memory and accessible at the specified address. This may require debugging and analysis using GDB.
 The exact method for obtaining the return address will depend on the target system, so memory inspection tools like GDB are essential.
 
---------------------------------------How the Defense Works--------------------------------------
+# How the Defense Works
 The TRACE defense mechanism uses a dynamic path-sensitive approach to bind the return address to a unique function call path. This is achieved by:
 1.Path state encoding: The current execution path is encoded using a state vector that is updated during function calls. 
 2.Encryption: The return address and its path context are encrypted using the PRESENT cipher. 
 3.Return address verification: Upon returning from a function, the integrity of the return address is verified by decrypting it and comparing it with the expected value.
 If the return address does not match the expected value, the program execution is aborted, preventing the control flow hijacking.
 
---------------------------------------License--------------------------------------
+# License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 
